@@ -106,16 +106,22 @@ end
 fsevent = FSEvent.new
 Dir.chdir '..'
 
-$sync = "rsync #{options[:symlink]} -C #{options[:remove]} -rt --rsh='#{options[:ssh]}' #{$exclude} '#{$d}' '#{options[:user]}@#{options[:host]}:#{options[:dir]}'" 
-
-system "/usr/local/bin/growlnotify -a 'Network Utility' -m 'Syncer2.0 started'"
+$sync = "rsync #{options[:symlink]} -C --include 'core' #{options[:remove]} -rt --rsh='#{options[:ssh]}' #{$exclude} '#{$d}' '#{options[:user]}@#{options[:host]}:#{options[:dir]}'" 
+$text = "Syncer2.0 started"
+#system "/usr/local/bin/growlnotify -a 'Network Utility' -m '#{$text}'"
+puts $text
+puts $sync
 system $sync
-system "/usr/local/bin/growlnotify -a 'Network Utility' -m 'Initial sync complete'"
+
+$text = "Initial sync complete"
+#system "/usr/local/bin/growlnotify -a 'Network Utility' -m '#{$text}'"
+puts $text
 
 fsevent.watch Dir.pwd do |directories| 
-#    puts $sync
 	system $sync
-	system "/usr/local/bin/growlnotify -a 'Network Utility' -m 'Synced changes inside: #{directories.inspect}'"
+	$text = "Synced changes inside: #{directories.inspect}" 
+#    system "/usr/local/bin/growlnotify -a 'Network Utility' -m 'Synced changes inside: #{directories.inspect}'"
+	puts $text
 end
 fsevent.run
 
